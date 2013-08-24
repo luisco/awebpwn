@@ -22,8 +22,8 @@ def scan_dir(root_dir):
 			try:			
 				f = os.path.join(root,myFile)
 				fileSize = fileSize + os.path.getsize(f)
-				fileDateCreate = time.ctime(os.path.getctime(f))
-				fileDateModified = time.ctime(os.path.getmtime(f))
+				fileDateCreate = os.path.getctime(f)
+				fileDateModified = os.path.getmtime(f)
 				fileSizeIndividual =  os.path.getsize(f)
 				
 				fileMD5 = hashlib.md5(open(f).read()).hexdigest() 
@@ -41,12 +41,12 @@ def scan_dir(root_dir):
 	print("[+] Total Files ", len(fileList))
 	print("[+] Total Folders ", folderCount)
 
-	cursor.execute('SELECT name_file, modified_date FROM files ORDER BY modified_date ASC LIMIT 0 , 5')
+	cursor.execute('SELECT name_file, modified_date FROM files ORDER BY modified_date DESC LIMIT 0 , 5')
 	rows = cursor.fetchall()
-	
+
 	print("\n[+] Ultimos archivos modificados\n")
 	for row in rows:
-		print "%s %s" % (row[0], row[1])
+		print "%s %s" % (row[0], time.ctime(row[1]))
 
 
 	

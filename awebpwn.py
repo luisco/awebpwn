@@ -13,7 +13,7 @@ def scan_dir(root_dir):
 	connection = sqlite3.connect('test.db')
 	cursor = connection.cursor()
 
-	cursor.execute('DELETE FROM fileDELETE FROM files;')
+	cursor.execute('DELETE FROM files;')
 	
 	for root, subFolders, files in os.walk(rootdir):
 		folderCount += len(subFolders)

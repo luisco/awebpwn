@@ -170,12 +170,36 @@ def main():
 	if options.file_log:
 		if os.path.exists(options.file_log):
 			print "\n[+] Analizando log\n"
+			path_xml = ''
 			scalp.scalper(options.file_log, "default_filter.xml", preferences)
 			lista_xml = glob.glob("*.xml")
-			path_xml = os.curdir + "/" + lista_xml[0]
+			for my_list_xml in lista_xml:
+				if my_list_xml.find("awebpown") < 0 and my_list_xml.find("default_filter") < 0:
+					path_xml_ori = my_list_xml
+			if path_xml_ori:			
+				path_xml = os.curdir + "/" + path_xml_ori
 			if os.path.exists(path_xml) :
+				print "\n - Preparando archivo: " + path_xml +"\n"
+
+				f = open(path_xml, 'r')
+				name_file = "./awebpown_" + path_xml_ori
+				if os.path.exists(name_file ) :
+					print " - Removiendo archivo antiguo: \n"
+					os.remove(name_file)
+
+				file_out_put = open( name_file , 'a')
+				i = 0
+				for line in f:
+					if i >= 4:
+						file_out_put.write(line)
+					i = i + 1
+				f.close()
+				file_out_put.close()
+
+				print "Archivo Generado: " + name_file + "\n"
+
 				print "\n[+] Parser Log\n"
-				scalparser.scalparser(path_xml)
+				scalparser.scalparser(name_file)
 		else:
 			print "[-] Archivo de log no se encuentra"
 

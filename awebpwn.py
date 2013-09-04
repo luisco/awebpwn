@@ -5,6 +5,8 @@ import optparse
 import sqlite3
 import hashlib
 import re
+import scalp
+import xml.dom.minidom
 
 def scan_dir(root_dir, is_hash, table_files):
 	
@@ -125,7 +127,8 @@ def main():
 	parser.add_option('-m', '--md5', action="store_true", dest='is_hash', default= False, help='Generar Hash de los archivos para almecenar en la base de datos - Mas lento')
 	parser.add_option('-o', '--original', type='string', dest='dir_original', help='Directorio original el cual se comparara con el directorio comprometido')
 	parser.add_option('-v', '--virus', action="store_true", dest='is_virus', default= False, help='Calcular si los archivos tienen codigo malicioso')
-        (options , args) = parser.parse_args()
+	parser.add_option('-l', '--log', type='string', dest='file_log', help='Verificar log del servidor web')
+	(options , args) = parser.parse_args()
 	
 
 	# Error on invalid number of arguements
@@ -147,6 +150,26 @@ def main():
 	if options.is_virus:
 		if os.path.exists(args[0]):
 			calcular_codigo_malicioso(args[0])
+
+	output  = ""
+	preferences = {
+		'attack_type' : [],
+		'period' : {
+			'start' : [01, 00, 0000, 00, 00, 00],# day, month, year, hour, minute, second
+			'end'   : [31, 11, 9999, 24, 59, 59]
+		},
+		'except'     : False,
+		'exhaustive' : True,
+		'encodings'  : False,
+		'output'     : "xml",
+		'odir'       : os.path.abspath(os.curdir),
+		'sample'     : float(100)
+	}
+	if options.file_log:
+		if os.path.exists(options.file_log):
+			scalp.scalper(options.file_log, "default_filter.xml", preferences)
+		else:
+			print "[-] Archivo de log no se encuentra"
 
 if __name__ == '__main__':
 	main()

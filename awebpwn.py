@@ -6,7 +6,8 @@ import sqlite3
 import hashlib
 import re
 import scalp
-import xml.dom.minidom
+import scalparser
+import glob
 
 def scan_dir(root_dir, is_hash, table_files):
 	
@@ -44,9 +45,10 @@ def scan_dir(root_dir, is_hash, table_files):
 	connection.commit()
 
 	if(table_files == 0):
-		print("[+] Total Size is {0} bytes".format(fileSize))
-		print("[+] Total Files ", len(fileList))
-		print("[+] Total Folders ", folderCount)
+		print "[+] Inventario de Archivos\n"
+		print " - Total Size is {0} bytes".format(fileSize)
+		print " - Total Files ", len(fileList)
+		print " - Total Folders ", folderCount
 
 		cursor.execute('SELECT name_file, modified_date FROM files ORDER BY modified_date DESC LIMIT 0 , 5')
 		rows = cursor.fetchall()
@@ -167,7 +169,13 @@ def main():
 	}
 	if options.file_log:
 		if os.path.exists(options.file_log):
+			print "\n[+] Analizando log\n"
 			scalp.scalper(options.file_log, "default_filter.xml", preferences)
+			lista_xml = glob.glob("*.xml")
+			path_xml = os.curdir + "/" + lista_xml[0]
+			if os.path.exists(path_xml) :
+				print "\n[+] Parser Log\n"
+				scalparser.scalparser(path_xml)
 		else:
 			print "[-] Archivo de log no se encuentra"
 

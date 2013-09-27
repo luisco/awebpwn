@@ -1,19 +1,16 @@
 
-
 <h1>Awebpwn</h1>
+
 Autor: Luis Hernandez - @luisco100
-26 de Septiembre 2013
+23 de Agosto 2013
 Bogota - Col
-==========================================================
 
-Herramienta que facilita la evaluación de un incidente web
+<h3>Herramienta que facilita la evaluación de un incidente web</h3>
 
-==========================================================
 
 Recomendaciones para el uso de la herramienta:
 
  <ul><li>Sacar una copia de la información a ser evaluada (carpeta raiz del sitio, imagenes, archivos de configuración, base de datos en formato de texto).</li></ul>
-
 
 Utilidad de la herramienta
 

@@ -5,7 +5,7 @@ Autor: Luis Hernandez - @luisco100
 23 de Agosto 2013
 Bogota - Col
 
-<h3>Herramienta que facilita la evaluación de un incidente web</h3>
+<h3>Herramienta que facilita la detección de las causas de un incidente web</h3>
 
 
 Recomendaciones para el uso de la herramienta:

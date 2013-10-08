@@ -3,7 +3,7 @@ import re
 import optparse,os
 
 whitelist = []
-attacksfilter = []
+filterattacks = []
 subtotal = []
 web_at = {}
 ip_at = {}
@@ -29,10 +29,10 @@ def esPrivada(ip):
 	return 0
 
 
-def attack_filtrado(attack):
+def filter_attack(attack):
 	#Parameter: attack type. Returns 1 if found in attacks filtering cmd parameters, 0 otherwise 
 	found=0
-	for elem in attacksfilter:
+	for elem in filterattacks:
 		if elem == attack:
 			found=1
 	
@@ -43,22 +43,22 @@ def scalparser(file_scalp):
 	xmldoc = xml.dom.minidom.parse(file_scalp)
 
 	print "Scalparser 04/09/2013\n";
-	print "By Lorenzo Martinez (lorenzo\@lorenzomartinez.es) Traducido a Python por Luis Hernandez (luisco100@gmail.com)\n";
+	print "By Lorenzo Martinez (lorenzo\@lorenzomartinez.es)Translated to Python by Luis Hernandez (luisco100@gmail.com)\n";
 	for n in xmldoc.getElementsByTagName("attack"):
 		print "Parsing attack " + n.attributes.get("type").value + "...\n";
-		for impacto in n.getElementsByTagName("impact"):
-			print "\timpact " + impacto.attributes.get("value").value +"\n" if impacto.attributes.get("value").value else ""
+		for impacto in n.getElementsByTagName("Impact"):
+			print "\tImpact " + impacto.attributes.get("value").value +"\n" if impacto.attributes.get("value").value else ""
 			ap = []#Array to be used for every impact of every attack
 			for item in impacto.childNodes:
 				if(item.nodeType==item.ELEMENT_NODE):
 					linea = item.getElementsByTagName("line")[0].childNodes[0].data
-					fields_ip = linea.split(" - - ")[0]
+					ip_fields = linea.split(" - - ")[0]
 					mirar = 0
 
 					#In $ip we have the attacker IP address
-					if (isinwhitelist(fields_ip) == 0): 
+					if (isinwhitelist(ip_fields) == 0): 
 					#If it is not marked as "white"-> we don't want to count our own IP address attacks 
-						if (esPrivada (fields_ip) == 0):
+						if (esPrivada (ip_fields) == 0):
 						#As -p flag is set at execution time, check if $ip is not private address
 							mirar = 1
 				
@@ -68,7 +68,7 @@ def scalparser(file_scalp):
 					
 						for my_ap in ap:
 						#Browse the current impact attack array to check if the current event exists
-							if ( my_ap['ip'] == fields_ip ):
+							if ( my_ap['ip'] == ip_fields ):
 								if (my_ap['reason'] == razon):
 									#It exists, increase the counter
 									my_ap['cuenta'] = my_ap['cuenta'] + 1
@@ -76,9 +76,9 @@ def scalparser(file_scalp):
 
 						if (found == 0):
 							#New pair found, create a new entry in array
-	       		        			ap.append({'ip' : fields_ip, 'reason' : razon, 'cuenta' : 1})
+	       		        			ap.append({'ip' : ip_fields, 'reason' : razon, 'cuenta' : 1})
 
-						if attack_filtrado(n.attributes.get("type").value):
+						if filter_attack(n.attributes.get("type").value):
 							print linea
 
 						fields = linea.split(" - - ")[1]
@@ -127,7 +127,7 @@ def scalparser(file_scalp):
 	ips_ordenadas.reverse()
 
 	i = 0
-	print "\nTop " + str(cuantas_ips) + " IPs attackers\n";
+	print "\n List of  Top " + str(cuantas_ips) + " Ip's attackers\n";
 	for my_ips_ordenadas in ips_ordenadas:
 		if i == cuantas_ips:
 	    		break
@@ -150,17 +150,18 @@ def main():
 
 	parser = optparse.OptionParser("usage %prog -f scalpedfile [-a <attack1,attack2>]", version="%prog 0.1")
 	parser.add_option('-f', '--file', type='string', dest='scalpedfile', help='scalpedfile')
-	parser.add_option('-a', dest='attacks', type='string', help= 'specify attacks separated by coma')
+	parser.add_option('-a', dest='attacks', type='string', help= 'Specify attacks separated by coma')
 	(options , args) = parser.parse_args()
 	
-	global attacksfilter
-	attacksfilter = str(options.attacks).split(',')
+	global filterattacks
+	filterattacks = str(options.attacks).split(',')
 
 	if options.scalpedfile:
 		if os.path.exists(options.scalpedfile):
 			scalparser(options.scalpedfile)
 		else:
-			print "[-] Archivo de log no se encuentra"
+			print "[-] Log file was not found. "
+			print "[-] Check manually the log file"
 
 if __name__ == '__main__':
 	main()
